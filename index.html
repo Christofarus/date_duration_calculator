@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Date Duration Calculator</title>
+  <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9ff;
+      padding: 2em;
+      max-width: 600px;
+      margin: auto;
+    }
+    h2 {
+      color: #3c3c6e;
+    }
+    input, button {
+      padding: 0.6em;
+      margin: 0.5em 0;
+      font-size: 1em;
+    }
+    button {
+      background-color: #3c3c6e;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2a2a52;
+    }
+    #output {
+      margin-top: 1em;
+      padding: 1em;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Date Duration Calculator by L2 Christopher Lucero</h2>
+  <input id="date1" type="text" placeholder="MMDDYYYY or MM-DD-YYYY">
+  <input id="date2" type="text" placeholder="MMDDYYYY or MM-DD-YYYY">
+  <br>
+  <button py-click="calculate()">Calculate Duration</button>
+  <div id="output"></div>
+
+  <py-script>
+from datetime import datetime
+from pyscript import Element
+
+def format_date_input(date_str):
+    digits = ''.join(filter(str.isdigit, date_str))
+    if len(digits) == 8:
+        return f"{digits[:2]}-{digits[2:4]}-{digits[4:]}"
+    return date_str
+
+def calculate():
+    date1_raw = Element("date1").value
+    date2_raw = Element("date2").value
+
+    date1_str = format_date_input(date1_raw)
+    date2_str = format_date_input(date2_raw)
+
+    try:
+        date1 = datetime.strptime(date1_str, "%m-%d-%Y")
+        date2 = datetime.strptime(date2_str, "%m-%d-%Y")
+
+        if date1 > date2:
+            date1, date2 = date2, date1
+
+        delta = date2 - date1
+
+        result = (
+            f"<b>Start Date:</b> {date1_str}<br>"
+            f"<b>End Date:</b> {date2_str}<br>"
+            f"<b>Total Days:</b> {delta.days}<br>"
+            f"<b>Day of Week (Start):</b> {date1.strftime('%A')}<br>"
+            f"<b>Day of Week (End):</b> {date2.strftime('%A')}"
+        )
+    except Exception as e:
+        result = f"<span style='color:red'><b>Error:</b> {e}</span>"
+
+    Element("output").element.innerHTML = result
+  </py-script>
+</body>
+</html>
